@@ -40,12 +40,22 @@ async function run() {
 
     // adding new movie
 
-    app.post("/movies", async(req, res) => {
+    app.post("/movies", async (req, res) => {
       const data = req.body;
       console.log(data);
       const result = await moviesCollection.insertOne(data);
       res.send(result);
-    })
+    });
+
+    // getting data for my_collection page
+    app.get("/my-movies", async (req, res) => {
+      const email = req.query.email;
+      console.log(email);
+      const result = await moviesCollection
+        .find({ addedBy: email })
+        .toArray();
+      res.send(result);
+    });
 
     // adding new users
     app.post("/users", async (req, res) => {
@@ -54,13 +64,12 @@ async function run() {
       const query = { email: email };
       const existingUser = await usersCollection.findOne(query);
 
-      if(existingUser) {
-        res.send({message: "user already exists"})
+      if (existingUser) {
+        res.send({ message: "user already exists" });
       } else {
         const result = await usersCollection.insertOne(newUser);
         res.send(result);
       }
-
     });
   } finally {
     // Ensures that the client will close when you finish/error
