@@ -47,13 +47,37 @@ async function run() {
       res.send(result);
     });
 
+    // update movie
+    app.put("/movies/update/:id", async (req, res) => {
+      const { id } = req.params;
+      const data = req.body;
+
+      const objectId = new ObjectId(id);
+      const filter = { _id: objectId };
+      const update = {
+        $set: data,
+      };
+
+      const result = await moviesCollection.updateOne(filter, update);
+
+      res.send(result);
+    });
+
+    // delete a movie
+    app.delete("/movies/:id", async (req, res) => {
+      const { id } = req.params;
+      //    const objectId = new ObjectId(id)
+      // const filter = {_id: objectId}
+      const result = await moviesCollection.deleteOne({ _id: new ObjectId(id) });
+
+      res.send(result);
+    });
+
     // getting data for my_collection page
     app.get("/my-movies", async (req, res) => {
       const email = req.query.email;
-      console.log(email);
-      const result = await moviesCollection
-        .find({ addedBy: email })
-        .toArray();
+      // console.log(email);
+      const result = await moviesCollection.find({ addedBy: email }).toArray();
       res.send(result);
     });
 
