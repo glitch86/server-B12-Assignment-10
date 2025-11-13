@@ -54,6 +54,7 @@ async function run() {
     const db = client.db("movieMaster");
     const moviesCollection = db.collection("movies");
     const usersCollection = db.collection("users");
+    const watcListCollection = db.collection("watchlist");
     // load all movies
     app.get("/movies", async (req, res) => {
       const result = await moviesCollection.find().toArray();
@@ -127,7 +128,34 @@ async function run() {
         const result = await usersCollection.insertOne(newUser);
         res.send(result);
       }
+      
     });
+
+
+    // watch list -
+    app.post("/watchlist/add", async(req, res) => {
+      const listData = req.body;
+      const id = req.body.movie_id
+      const query = {movie_id: id};
+      const existingItem = await watcListCollection.findOne(query);
+
+      if (existingItem) {
+         res.send({ message: "already exists" });
+      } else {
+        const result = await watcListCollection.insertOne(listData);
+        res.send({message: "added to list"});
+      }
+    })
+
+
+    // getting data for watchlist
+    app.get("/watchlist", async (req, res) => {
+      const email = req.query.email;
+      // console.log(email);
+      const result = await watcListCollection.find({ email: email }).toArray();
+      res.send(result);
+    });
+
   } finally {
     // Ensures that the client will close when you finish/error
   }
