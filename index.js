@@ -95,7 +95,7 @@ async function run() {
     });
 
     // delete a movie
-    app.delete("/movies/:id", verifyToken, async (req, res) => {
+    app.delete("/movies/:id",  async (req, res) => {
       const { id } = req.params;
       //    const objectId = new ObjectId(id)
       // const filter = {_id: objectId}
