@@ -6,6 +6,15 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 
+const admin = require("firebase-admin");
+
+const serviceAccount = require("./serviceKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.n1li6q4.mongodb.net/?appName=Cluster0`;
 const port = process.env.PORT || 3000;
@@ -17,6 +26,12 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+
+const verifyToken = (req, res, next) => {
+
+}
+
 
 async function run() {
   try {
@@ -40,7 +55,7 @@ async function run() {
 
     // adding new movie
 
-    app.post("/movies", async (req, res) => {
+    app.post("/movies/add", async (req, res) => {
       const data = req.body;
       console.log(data);
       const result = await moviesCollection.insertOne(data);
